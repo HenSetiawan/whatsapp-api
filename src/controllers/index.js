@@ -1,4 +1,8 @@
-const { createClient, getClient, sessionState } = require("../helpers/index.js");
+const {
+  createClient,
+  getClient,
+  sessionState,
+} = require("../helpers/index.js");
 
 exports.createClient = async (req, res) => {
   try {
@@ -9,11 +13,7 @@ exports.createClient = async (req, res) => {
       return res.json({ ok: true, status: st });
     }
 
-    if (
-      st === "initializing" ||
-      st === "disconnected" ||
-      st === "failed"
-    ) {
+    if (st === "initializing" || st === "disconnected" || st === "failed") {
       client.initialize().catch((err) => {
         sessionState.status = "failed";
         sessionState.error = String(err);
@@ -82,6 +82,27 @@ exports.sendMessage = async (req, res) => {
       timestamp: msg.timestamp,
       ack: msg.ack,
     });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: String(err) });
+  }
+};
+
+exports.deleteClient = async (req, res) => {
+  try {
+    if (client) {
+      try {
+        await client.logout();
+      } catch {}
+      try {
+        await client.destroy();
+      } catch {}
+      client = null;
+    }
+    if (fs.existsSync(SESSION_DIR)) {
+      fs.rmSync(SESSION_DIR, { recursive: true, force: true });
+    }
+    sessionState = { status: "idle" };
+    res.json({ ok: true, deleted: true });
   } catch (err) {
     res.status(500).json({ ok: false, error: String(err) });
   }

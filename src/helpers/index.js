@@ -31,7 +31,6 @@ exports.createClient = () => {
     try {
       qrcode.generate(qr, { small: true });
       sessionState.status = "qr";
-      sessionState.qr = await qrcode.toDataURL(qr);
     } catch (e) {
       sessionState.status = "failed";
       sessionState.error = "QR encode failed";
