@@ -3,6 +3,8 @@ const {
   getClient,
   sessionState,
 } = require("../helpers/index.js");
+const fs = require("fs");
+const SESSION_DIR = process.env.SESSION_DIR || ".wwebjs_auth";
 
 exports.createClient = async (req, res) => {
   try {
@@ -88,6 +90,7 @@ exports.sendMessage = async (req, res) => {
 };
 
 exports.deleteClient = async (req, res) => {
+  const client = getClient();
   try {
     if (client) {
       try {
