@@ -1,38 +1,8 @@
-const {
-  createClient,
+let {
   getClient,
   sessionState,
 } = require("../helpers/index.js");
 const fs = require("fs");
-const SESSION_DIR = process.env.SESSION_DIR || ".wwebjs_auth";
-
-exports.createClient = async (req, res) => {
-  try {
-    const client = createClient();
-    const st = sessionState.status;
-
-    if (st === "ready" || st === "authenticated") {
-      return res.json({ ok: true, status: st });
-    }
-
-    if (st === "initializing" || st === "disconnected" || st === "failed") {
-      client.initialize().catch((err) => {
-        sessionState.status = "failed";
-        sessionState.error = String(err);
-      });
-    }
-
-    const payload = { ok: true, status: sessionState.status };
-    if (sessionState.qr) payload.qr = sessionState.qr;
-    res.json(payload);
-  } catch (err) {
-    res.status(500).json({ ok: false, error: String(err) });
-  }
-};
-
-exports.sessionStatus = (req, res) => {
-  res.json({ ok: true, ...sessionState });
-};
 
 exports.getChatId = async (req, res) => {
   const client = getClient();
