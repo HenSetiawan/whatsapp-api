@@ -1,12 +1,13 @@
-const express = require("express");
+import express from "express";
+import {getChatId, sendMessage} from "../controllers/message.js";
+import {sessionStatus, deleteClient, createClientWeb } from "../controllers/session.js";
+
 const apiRoute = express.Router();
-const messagesController = require("../controllers/message.js");
-const sessionController = require("../controllers/session.js");
 
-apiRoute.post("/api/session/start", sessionController.createClient);
-apiRoute.get("/api/session/status", sessionController.sessionStatus);
-apiRoute.post("/api/session/delete", messagesController.deleteClient);
-apiRoute.get("/api/chats", messagesController.getChatId);
-apiRoute.post("/api/message", messagesController.sendMessage);
+apiRoute.post("/api/session/start", createClientWeb);
+apiRoute.get("/api/session/status", sessionStatus);
+apiRoute.post("/api/session/delete", deleteClient);
+apiRoute.get("/api/chats", getChatId);
+apiRoute.post("/api/message", sendMessage);
 
-module.exports = apiRoute;
+export default apiRoute;

@@ -1,9 +1,8 @@
-const {
+import {
   createClient,
-  sessionState,
-} = require("../helpers/index.js");
+  sessionState} from "../helpers/index.js";
 
-exports.createClient = async (req, res) => {
+async function createClientWeb(req, res) {
   try {
     const client = createClient();
     const st = sessionState.status;
@@ -27,6 +26,30 @@ exports.createClient = async (req, res) => {
   }
 };
 
-exports.sessionStatus = (req, res) => {
+function sessionStatus(req, res) {
   res.json({ ok: true, ...sessionState });
 };
+
+async function deleteClient(req, res) {
+  const client = getClient();
+  try {
+    if (client) {
+      try {
+        await client.logout();
+      } catch {}
+      try {
+        await client.destroy();
+      } catch {}
+      client = null;
+    }
+    if (fs.existsSync(SESSION_DIR)) {
+      fs.rmSync(SESSION_DIR, { recursive: true, force: true });
+    }
+    sessionState = { status: "idle" };
+    res.json({ ok: true, deleted: true });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: String(err) });
+  }
+};
+
+export{ createClientWeb, sessionStatus, deleteClient };

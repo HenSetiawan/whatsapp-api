@@ -1,15 +1,14 @@
-const { Client, LocalAuth } = require("whatsapp-web.js");
-const qrcode = require("qrcode-terminal");
+import pkg from 'whatsapp-web.js';
+const { Client, LocalAuth } = pkg;
+import qrcode from "qrcode-terminal";
 
 const SESSION_DIR = process.env.SESSION_DIR || ".wwebjs_auth";
 
 // state & client global
-const sessionState = { status: "idle" };
+export const sessionState = { status: "idle" };
 let client = null;
 
-exports.sessionState = sessionState;
-
-exports.createClient = () => {
+export function createClient() {
   if (client) return client;
 
   sessionState.status = "initializing";
@@ -57,6 +56,8 @@ exports.createClient = () => {
   });
 
   return client;
-};
+}
 
-exports.getClient = () => client;
+export function getClient() {
+  return client;
+}

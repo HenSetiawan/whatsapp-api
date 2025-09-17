@@ -1,10 +1,7 @@
-let {
-  getClient,
-  sessionState,
-} = require("../helpers/index.js");
-const fs = require("fs");
+import { getClient, sessionState } from "../helpers/index.js";
+import fs from "fs";
 
-exports.getChatId = async (req, res) => {
+async function getChatId(req, res) {
   const client = getClient();
   if (!client)
     return res.status(400).json({ ok: false, error: "session not started" });
@@ -24,7 +21,7 @@ exports.getChatId = async (req, res) => {
   }
 };
 
-exports.sendMessage = async (req, res) => {
+async function sendMessage(req, res) {
   const { chatId, message } = req.body || {};
 
   if (!chatId || !message) {
@@ -59,24 +56,6 @@ exports.sendMessage = async (req, res) => {
   }
 };
 
-exports.deleteClient = async (req, res) => {
-  const client = getClient();
-  try {
-    if (client) {
-      try {
-        await client.logout();
-      } catch {}
-      try {
-        await client.destroy();
-      } catch {}
-      client = null;
-    }
-    if (fs.existsSync(SESSION_DIR)) {
-      fs.rmSync(SESSION_DIR, { recursive: true, force: true });
-    }
-    sessionState = { status: "idle" };
-    res.json({ ok: true, deleted: true });
-  } catch (err) {
-    res.status(500).json({ ok: false, error: String(err) });
-  }
-};
+
+
+export { getChatId, sendMessage };
